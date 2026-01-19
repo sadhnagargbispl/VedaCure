@@ -200,7 +200,7 @@
             <!-- Title -->
             <table>
                 <tr>
-                    <td class="header-main">Income Statement</td>
+                    <td class="header-main">Statement</td>
                 </tr>
             </table>
 
@@ -385,8 +385,75 @@
                     </td>
                 </tr>
             </table>
-
-
+            <div runat="server" id="DivStarGrowthIncome" visible="false">
+                <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td colspan="4" class="header-main">Star Growth Income</td>
+                    </tr>
+                    <tr class="GridHeader">
+                        <td width="35%" class="earn-head">Rank</td>
+                        <td width="35%" class="earn-head">Slab</td>
+                        <td width="35%" class="earn-head">Business</td>
+                        <td width="35%" class="earn-head">Income</td>
+                    </tr>
+                    <asp:Repeater ID="RptDirects" runat="server">
+                        <ItemTemplate>
+                            <tr class="GridItem">
+                                <td><%# Eval("Rank") %></td>
+                                <td><%# Eval("Slab") %></td>
+                                <td><%# Eval("Business") %></td>
+                                <td><%# Eval("Income") %></td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </table>
+            </div>
+            <div runat="server" id="DivGlobalPoolIncome" visible="false">
+                <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td colspan="4" class="header-main">Global Pool Income</td>
+                    </tr>
+                    <tr class="GridHeader">
+                        <td width="35%" class="earn-head">Company Turnover</td>
+                        <td width="35%" class="earn-head">No. of Achiever</td>
+                        <td width="35%" class="earn-head">Global Pool Income</td>
+                    </tr>
+                    <tr class="GridItem">
+                        <td>
+                            <div id="DivMonthlySelfLeftBV" runat="server"></div>
+                        </td>
+                        <td>
+                            <div id="Divnoofachievers" runat="server"></div>
+                        </td>
+                        <td>
+                            <div id="Divincome" runat="server"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div runat="server" id="DivGenerationIncome" visible="false">
+                <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td colspan="4" class="header-main">Generation Income</td>
+                    </tr>
+                    <tr class="GridHeader">
+                        <td width="35%" class="earn-head">Level</td>
+                        <td width="35%" class="earn-head">From ID</td>
+                        <td width="35%" class="earn-head">From Name</td>
+                        <td width="35%" class="earn-head">Income</td>
+                    </tr>
+                    <asp:Repeater ID="RptGenerationIncome" runat="server">
+                        <ItemTemplate>
+                            <tr class="GridItem">
+                                <td><%# Eval("Mlevel") %></td>
+                                <td><%# Eval("idno") %></td>
+                                <td><%# Eval("memfirstname") %></td>
+                                <td><%# Eval("Comm") %></td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </table>
+            </div>
             <!-- Signature -->
             <div style="text-align: right; padding: 0 40px 40px 0;">
                 <div style="width: 320px; border-top: 4px solid #000; height: 10px;"></div>
