@@ -181,11 +181,8 @@ public partial class DownlinePurchase : System.Web.UI.Page
                 condition += $" AND CAST(CONVERT(VARCHAR, b.BillDate, 106) AS DATE) >= '{FrmDate}'" +
                              $" AND CAST(CONVERT(VARCHAR, b.BillDate, 106) AS DATE) <= '{ToDate}'";
             }
-
             string str = "";
             string compId = Session["CompID"]?.ToString() ?? "";
-
-            // === REPURCHASE SECTION (RbtProduct = "R") ===
             if (DDlSelectType.SelectedValue == "G")
             {
                 if (RbtProduct.SelectedValue == "R")
@@ -226,7 +223,49 @@ public partial class DownlinePurchase : System.Web.UI.Page
     + " a.Formno = b.Formno and b.BillType not in ('R','G') "
     + " Order by b.rectimestamp ";
                 }
-
+            }
+            else if (DDlSelectType.SelectedValue == "M")
+            {
+                if (RbtProduct.SelectedValue == "R")
+                {
+                    str = " select a.Idno as [Member ID], (a.MemFirstName + ' ' + a.MemLastName) As [Member Name], "
+           + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
+           + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
+           + " B.Repurchincome as BV "
+           + " from M_MemberMaster as a with(nolock) "
+           + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn "
+           + " Inner Join M_KitMaster as k with(nolock) on k.RowStatus = 'Y', "
+           + " RepurchIncome as b with(nolock) "
+           + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
+           + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
+           + " Left Join vedacure..TrnBillMain as s with(nolock) "
+           + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
+           + " where b.Kitid = k.KitId "
+           + "     and d.Formno = '" + Session["Formno"] + "' "
+           + condition + " and "
+           + " a.Formno = b.Formno and b.BillType not in ('B') "
+           + " Order by b.rectimestamp ";
+                }
+                else
+                {
+                    str = " select a.Idno as [Member ID], (a.MemFirstName + ' ' + a.MemLastName) As [Member Name], "
+             + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
+             + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
+             + " B.Repurchincome as BV "
+             + " from M_MemberMaster as a with(nolock) "
+             + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn "
+             + " Inner Join M_KitMaster as k with(nolock) on k.RowStatus = 'Y', "
+             + " RepurchIncome as b with(nolock) "
+             + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
+             + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
+             + " Left Join vedacure..TrnBillMain as s with(nolock) "
+             + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
+             + " where b.Kitid = k.KitId "
+             + "     and d.Formno = '" + Session["Formno"] + "' "
+             + condition + " and "
+             + " a.Formno = b.Formno and b.BillType in ('B') "
+             + " Order by b.rectimestamp ";
+                }
             }
             else
             {
@@ -270,8 +309,6 @@ public partial class DownlinePurchase : System.Web.UI.Page
       + " a.Formno = b.Formno and b.BillType not in ('R','G') "
       + " Order by b.rectimestamp ";
                 }
-
-
             }
             DataTable dt = new DataTable();
             var dal = new DAL(Application["Connect"].ToString());
