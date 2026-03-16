@@ -55,25 +55,30 @@ public partial class DownlinePurchase : System.Web.UI.Page
     }
     protected void GrdDirects_PageIndexChanged(object source, DataGridPageChangedEventArgs e)
     {
-        try
-        {
-            GrdDirects.CurrentPageIndex = 0;
-            GrdDirects.CurrentPageIndex = e.NewPageIndex;
-
-            GrdDirects.DataSource = Session["DirectData1"];
-            GrdDirects.PageSize = Convert.ToInt32(ddlPazeSize.SelectedValue);
-            GrdDirects.DataBind();
-        }
-        catch (Exception ex)
-        {
-            string path = HttpContext.Current.Request.Url.AbsoluteUri;
-            string text = path + ":  " +
-                          DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss:fff") +
-                          Environment.NewLine;
-
-            objGen.WriteToFile(text + ex.Message);
-        }
+        GrdDirects.CurrentPageIndex = e.NewPageIndex; // ⭐ DataGrid uses CurrentPageIndex
+        LevelDetail();                              // ⭐ Rebind data
     }
+    //protected void GrdDirects_PageIndexChanged(object source, DataGridPageChangedEventArgs e)
+    //{
+    //    try
+    //    {
+    //        GrdDirects.CurrentPageIndex = 0;
+    //        GrdDirects.CurrentPageIndex = e.NewPageIndex;
+
+    //        GrdDirects.DataSource = Session["DirectData1"];
+    //        GrdDirects.PageSize = Convert.ToInt32(ddlPazeSize.SelectedValue);
+    //        GrdDirects.DataBind();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        string path = HttpContext.Current.Request.Url.AbsoluteUri;
+    //        string text = path + ":  " +
+    //                      DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss:fff") +
+    //                      Environment.NewLine;
+
+    //        objGen.WriteToFile(text + ex.Message);
+    //    }
+    //}
     protected void DdlLevel_SelectedIndexChanged(object sender, EventArgs e)
     {
         try
@@ -181,8 +186,11 @@ public partial class DownlinePurchase : System.Web.UI.Page
                 condition += $" AND CAST(CONVERT(VARCHAR, b.BillDate, 106) AS DATE) >= '{FrmDate}'" +
                              $" AND CAST(CONVERT(VARCHAR, b.BillDate, 106) AS DATE) <= '{ToDate}'";
             }
+
             string str = "";
             string compId = Session["CompID"]?.ToString() ?? "";
+
+            // === REPURCHASE SECTION (RbtProduct = "R") ===
             if (DDlSelectType.SelectedValue == "G")
             {
                 if (RbtProduct.SelectedValue == "R")
@@ -224,102 +232,60 @@ public partial class DownlinePurchase : System.Web.UI.Page
     + " Order by b.rectimestamp ";
                 }
             }
-            else if (DDlSelectType.SelectedValue == "M")
+            if (DDlSelectType.SelectedValue == "M")
             {
                 if (RbtProduct.SelectedValue == "R")
                 {
                     str = " select a.Idno as [Member ID], (a.MemFirstName + ' ' + a.MemLastName) As [Member Name], "
-           + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
-           + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
-           + " B.Repurchincome as BV "
-           + " from M_MemberMaster as a with(nolock) "
-           + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn "
-           + " Inner Join M_KitMaster as k with(nolock) on k.RowStatus = 'Y', "
-           + " RepurchIncome as b with(nolock) "
-           + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
-           + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
-           + " Left Join vedacure..TrnBillMain as s with(nolock) "
-           + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
-           + " where b.Kitid = k.KitId "
-           + "     and d.Formno = '" + Session["Formno"] + "' "
-           + condition + " and "
-           + " a.Formno = b.Formno and b.BillType not in ('B') "
-           + " Order by b.rectimestamp ";
+     + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
+     + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
+     + " B.Repurchincome as BV "
+     + " from M_MemberMaster as a with(nolock) "
+     + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn, "
+     + " RepurchIncome as b with(nolock) "
+     + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
+     + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
+     + " Left Join vedacure..TrnBillMain as s with(nolock) "
+     + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
+     + " where d.Formno = '" + Session["Formno"] + "' "
+     + condition + " and "
+     + " a.Formno = b.Formno and b.BillType in ('R','G') "
+     + " Order by b.rectimestamp ";
                 }
-                else
+                if (RbtProduct.SelectedValue == "T")
                 {
                     str = " select a.Idno as [Member ID], (a.MemFirstName + ' ' + a.MemLastName) As [Member Name], "
-             + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
-             + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
-             + " B.Repurchincome as BV "
-             + " from M_MemberMaster as a with(nolock) "
-             + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn "
-             + " Inner Join M_KitMaster as k with(nolock) on k.RowStatus = 'Y', "
-             + " RepurchIncome as b with(nolock) "
-             + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
-             + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
-             + " Left Join vedacure..TrnBillMain as s with(nolock) "
-             + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
-             + " where b.Kitid = k.KitId "
-             + "     and d.Formno = '" + Session["Formno"] + "' "
-             + condition + " and "
-             + " a.Formno = b.Formno and b.BillType in ('B') "
-             + " Order by b.rectimestamp ";
+     + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
+     + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
+     + " B.Repurchincome as BV "
+     + " from M_MemberMaster as a with(nolock) "
+     + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn "
+     + " Inner Join M_KitMaster as k with(nolock) on k.RowStatus = 'Y', "
+     + " RepurchIncome as b with(nolock) "
+     + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
+     + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
+     + " Left Join vedacure..TrnBillMain as s with(nolock) "
+     + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
+     + " where b.Kitid = k.KitId "
+     + "     and d.Formno = '" + Session["Formno"] + "' "
+     + condition + " and "
+     + " a.Formno = b.Formno and b.BillType not in ('R','G') "
+     + " Order by b.rectimestamp ";
                 }
             }
-            else
-            {
-                if (RbtProduct.SelectedValue == "A")
-                {
-                    str = " select a.Idno as [Member ID], (a.MemFirstName + ' ' + a.MemLastName) As [Member Name], "
-      + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
-      + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
-      + " B.Repurchincome as BV "
-      + " from M_MemberMaster as a with(nolock) "
-      + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn "
-      + " Inner Join M_KitMaster as k with(nolock) on k.RowStatus = 'Y', "
-      + " RepurchIncome as b with(nolock) "
-      + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
-      + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
-      + " Left Join vedacure..TrnBillMain as s with(nolock) "
-      + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
-      + " where b.Kitid = k.KitId "
-      + "     and d.Formno = '" + Session["Formno"] + "' "
-      + condition + " and "
-      + " a.Formno = b.Formno and b.BillType not in ('R','G') "
-      + " Order by b.rectimestamp ";
-                }
-                else
-                {
-                    str = " select a.Idno as [Member ID], (a.MemFirstName + ' ' + a.MemLastName) As [Member Name], "
-      + " Case when d.LegNo = 1 then 'Group A' else 'Group B' end as [Group Name], "
-      + " Replace(Convert(Varchar, b.BillDate, 106), ' ', '-') as [Bill Date], "
-      + " B.Repurchincome as BV "
-      + " from M_MemberMaster as a with(nolock) "
-      + " Inner Join M_MemTreeRelation as d with(nolock) on a.Formno = d.FormnoDwn "
-      + " Inner Join M_KitMaster as k with(nolock) on k.RowStatus = 'Y', "
-      + " RepurchIncome as b with(nolock) "
-      + " Left Join TrnOrder as c with(nolock) On c.Formno = b.Formno "
-      + "     AND 'Order ' + CAST(OrderNo as nvarchar(100)) = b.BillNo "
-      + " Left Join vedacure..TrnBillMain as s with(nolock) "
-      + "     On b.Formno = s.Formno and s.BillNo = b.BillNo "
-      + " where b.Kitid = k.KitId "
-      + "     and d.Formno = '" + Session["Formno"] + "' "
-      + condition + " and "
-      + " a.Formno = b.Formno and b.BillType not in ('R','G') "
-      + " Order by b.rectimestamp ";
-                }
-            }
+          
             DataTable dt = new DataTable();
             var dal = new DAL(Application["Connect"].ToString());
             dt = dal.GetData(str);
 
             Session["DirectData1"] = dt;
             GrdDirects.DataSource = dt;
+            //if (dt.Rows.Count > 0)
+            //{
             LblttlRcd.Text = dt.Rows.Count.ToString();
             LblttlRcd1.Text = dt.Rows.Count.ToString();
-            GrdDirects.PageSize = Convert.ToInt32(ddlPazeSize.SelectedValue);
-            GrdDirects.DataBind();
+            //GrdDirects.PageSize = Convert.ToInt32(ddlPazeSize.SelectedValue);
+            //GrdDirects.DataBind();
             if (DDlSelectType.SelectedValue == "M")
             {
                 divR.Visible = false;
@@ -343,6 +309,7 @@ public partial class DownlinePurchase : System.Web.UI.Page
             // Visibility Controls
             bool showTotalDiv = !(new[] { "1007" }.Contains(compId) && DDlSelectType.SelectedValue == "M");
             divtotal.Visible = showTotalDiv;
+            //}  
         }
         catch (Exception ex)
         {
@@ -508,6 +475,7 @@ public partial class DownlinePurchase : System.Web.UI.Page
             objGen.WriteToFile(text + ex.Message);
         }
     }
+
 }
 public static class Extensions
 {

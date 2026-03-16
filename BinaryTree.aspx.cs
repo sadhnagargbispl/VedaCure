@@ -86,10 +86,10 @@ public partial class BinaryTree : System.Web.UI.Page
         {
             if (Convert.ToString(Session["Status"]) == "OK")
             {
-                //if (Conn.State == ConnectionState.Open)
-                //{
-                //    Conn.Open();
-                //}
+                if (Conn.State == ConnectionState.Open)
+                {
+                    Conn.Open();
+                }
             }
             else
             {
@@ -103,22 +103,17 @@ public partial class BinaryTree : System.Web.UI.Page
 
     protected void BtnStepabove_Click(object sender, EventArgs e)
     {
-        if (Session["Upliner"] != null && Session["Upliner"].ToString() != "0" && Session["RefUpliner"] != null && Session["RefUpliner"].ToString() != Session["Upliner"].ToString())
+        if (Session["Upliner"] != null &&
+            Convert.ToInt32(Session["Upliner"]) != 0 &&
+            Convert.ToString(Session["RefUpliner"]) != Convert.ToString(Session["Upliner"]))
         {
             string uplnformno = Session["Upliner"].ToString();
-            BtnStepabove.Enabled = true;
+
             TreeFrame.Attributes["src"] = "NewTree?DownLineFormNo=" + uplnformno;
         }
-        else if ((Session["FormNO"] == null || Session["FormNO"].ToString() == "") ||
-    (Request["DownLineFormNo"] == null || Request["DownLineFormNo"].ToString() == "") ||
-    (Session["FormNO"] != null && Session["Upliner"] != null &&
-     Session["FormNO"].ToString() == Session["Upliner"].ToString()))
+        else if (Convert.ToString(Session["RefUpliner"]) ==
+                 Convert.ToString(Session["Upliner"]))
         {
-            TreeFrame.Attributes["src"] = "NewTree?DownLineFormNo=" + Session["FORMNO"];
-        }
-        else if (Session["RefUpliner"] != null && Session["Upliner"] != null && Session["RefUpliner"].ToString() == Session["Upliner"].ToString())
-        {
-            BtnStepabove.Enabled = false;
             Response.Write("Sorry!! You can't see your upliner tree.");
             Response.End();
         }

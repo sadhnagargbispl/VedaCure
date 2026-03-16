@@ -10,7 +10,7 @@ public class Crypto
 {
     private static readonly TripleDESCryptoServiceProvider DES = new TripleDESCryptoServiceProvider();
     private static readonly MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();
-    private static readonly string key = "sg75b79-nj48dh02";
+    private static readonly string key = "kg75f79-nj48dh01";
 
     public static byte[] MD5Hash(string value)
     {

@@ -173,7 +173,8 @@
                                             <asp:DataGrid ID="GrdDirects" runat="server" PageSize="10" CssClass="table table-striped table-bordered"
                                                 CellPadding="3" HorizontalAlign="Center" AutoGenerateColumns="true" AllowPaging="True"
                                                 Width="100%" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"
-                                                HeaderStyle-VerticalAlign="Middle" ItemStyle-VerticalAlign="Middle" OnPageIndexChanged="GrdDirects_PageIndexChanged">
+                                                HeaderStyle-VerticalAlign="Middle" ItemStyle-VerticalAlign="Middle"
+                                                OnPageIndexChanged="GrdDirects_PageIndexChanged">
                                                 <Columns>
                                                     <asp:TemplateColumn HeaderText="S.No">
                                                         <ItemTemplate>

@@ -292,9 +292,9 @@
                     <td colspan="4" class="header-main">Income Details</td>
                 </tr>
                 <tr>
-                    <td width="35%" class="earn-head">Earnings</td>
+                    <td  class="earn-head">Earnings</td>
                     <td width="15%" class="earn-head">Amount (Rs.)</td>
-                    <td width="35%" class="deduct-head">Deductions</td>
+                    <td  class="deduct-head">Deductions</td>
                     <td width="15%" class="deduct-head">Amount (Rs.)</td>
                 </tr>
 
@@ -388,20 +388,22 @@
             <div runat="server" id="DivStarGrowthIncome" visible="false">
                 <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
                     <tr>
-                        <td colspan="4" class="header-main">Star Growth Income</td>
+                        <td colspan="6" class="header-main">Star Growth Income</td>
                     </tr>
                     <tr class="GridHeader">
-                        <td width="35%" class="earn-head">Rank</td>
-                        <td width="35%" class="earn-head">Slab</td>
-                        <td width="35%" class="earn-head">Business</td>
-                        <td width="35%" class="earn-head">Income</td>
+                        <td class="earn-head">Ambassador Rank</td>
+                        <td class="earn-head">Slab</td>
+                        <td class="earn-head">Left BV</td>
+                        <td class="earn-head">Right BV</td>
+                        <td class="earn-head">Income</td>
                     </tr>
                     <asp:Repeater ID="RptDirects" runat="server">
                         <ItemTemplate>
                             <tr class="GridItem">
                                 <td><%# Eval("Rank") %></td>
                                 <td><%# Eval("Slab") %></td>
-                                <td><%# Eval("Business") %></td>
+                                <td><%# Eval("LeftRBv") %></td>
+                                <td><%# Eval("RightRBv") %></td>
                                 <td><%# Eval("Income") %></td>
                             </tr>
                         </ItemTemplate>
@@ -411,16 +413,23 @@
             <div runat="server" id="DivGlobalPoolIncome" visible="false">
                 <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
                     <tr>
-                        <td colspan="4" class="header-main">Global Pool Income</td>
+                        <td colspan="6" class="header-main">Global Pool Income</td>
                     </tr>
                     <tr class="GridHeader">
-                        <td width="35%" class="earn-head">Company Turnover</td>
-                        <td width="35%" class="earn-head">No. of Achiever</td>
-                        <td width="35%" class="earn-head">Global Pool Income</td>
+                        <td  class="earn-head">Company Turnover</td>
+                        <td  class="earn-head">Slab</td>
+                        <td  class="earn-head">Global Pool Fund</td>
+                        <td  class="earn-head">No. of Achiever</td>
+                        <td  class="earn-head">Global Pool Income</td>
                     </tr>
                     <tr class="GridItem">
                         <td>
                             <div id="DivMonthlySelfLeftBV" runat="server"></div>
+                        </td>
+                        <td>2.5%
+                        </td>
+                        <td>
+                            <div id="Divglobalfund" runat="server"></div>
                         </td>
                         <td>
                             <div id="Divnoofachievers" runat="server"></div>
@@ -431,16 +440,43 @@
                     </tr>
                 </table>
             </div>
+            <div runat="server" id="DivMatching" visible="false">
+                <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td colspan="4" class="header-main">Repurchase Matching Income</td>
+                    </tr>
+                    <tr class="GridHeader">
+                        <td  class="earn-head">Left BV</td>
+                        <td  class="earn-head">Right BV</td>
+                        <td  class="earn-head">Self BV</td>
+                        <td  class="earn-head">Matched BV</td>
+                    </tr>
+                    <tr class="GridItem">
+                        <td>
+                            <div id="LLeftBV" runat="server"></div>
+                        </td>
+                        <td>
+                            <div id="LRightBV" runat="server"></div>
+                        </td>
+                        <td>
+                            <div id="LSelfBV" runat="server"></div>
+                        </td>
+                        <td>
+                            <div id="LMatchedBV" runat="server"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <div runat="server" id="DivGenerationIncome" visible="false">
                 <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
                     <tr>
                         <td colspan="4" class="header-main">Generation Income</td>
                     </tr>
                     <tr class="GridHeader">
-                        <td width="35%" class="earn-head">Level</td>
-                        <td width="35%" class="earn-head">From ID</td>
-                        <td width="35%" class="earn-head">From Name</td>
-                        <td width="35%" class="earn-head">Income</td>
+                        <td  class="earn-head">Level</td>
+                        <td  class="earn-head">From ID</td>
+                        <td  class="earn-head">From Name</td>
+                        <td  class="earn-head">Income</td>
                     </tr>
                     <asp:Repeater ID="RptGenerationIncome" runat="server">
                         <ItemTemplate>

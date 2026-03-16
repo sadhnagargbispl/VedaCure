@@ -26,30 +26,47 @@ public partial class Default : System.Web.UI.Page
         string Str = string.Empty;
         conn = new SqlConnection(Application["Connect"].ToString());
         conn.Open();
+        string decryptedStr = null;
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         if (!Page.IsPostBack)
         {
             if (Request["lgnT"] != null)
             {
                 // keep same behavior: replace spaces with + before decrypting
-                Str = Crypto.Decrypt(Request["lgnT"].Replace(" ", "+"));
+                //Str = Crypto.Decrypt(Request["lgnT"].Replace(" ", "+"));
 
+                //Str = Crypto.Decrypt(Request["lgnT"].Replace(" ", "+"));
+                //string idFromRequest = Request["ID"];
+                //string nowPattern1 = DateTime.Now.Day.ToString() + DateTime.Now.Hour.ToString() + DateTime.Now.Year.ToString() + (DateTime.Now.Month - 1).ToString();
+                //string nowPattern2 = DateTime.Now.Day.ToString() + (DateTime.Now.Hour - 1).ToString() + DateTime.Now.Year.ToString() + (DateTime.Now.Month - 1).ToString();
+                //if (idFromRequest == nowPattern1 || idFromRequest == nowPattern2)
+                //{
+                //    if (Str != null && Str.Contains("uid="))
+                //    {
+                //        int UIdIndx = Str.IndexOf("&pwd");
+                //        if (UIdIndx > 4)
+                //        {
+                //            uid = Str.Substring(4, UIdIndx - 4);
+                //            Pwd = Str.Substring(UIdIndx + 5, Str.Length - UIdIndx - 5);
+                //        }
+                //    }
+                //}
+                //objModuleFun = new ModuleFunction((string)HttpContext.Current.Session["MlmDatabase" + Session["CompID"]]);
+                decryptedStr = Crypto.Decrypt(Request["lgnT"].Replace(" ", "+"));
 
-                string idFromRequest = Request["ID"];
-                string nowPattern1 = DateTime.Now.Day.ToString() + DateTime.Now.Hour.ToString() + DateTime.Now.Year.ToString() + (DateTime.Now.Month - 1).ToString();
-                string nowPattern2 = DateTime.Now.Day.ToString() + (DateTime.Now.Hour - 1).ToString() + DateTime.Now.Year.ToString() + (DateTime.Now.Month - 1).ToString();
+                DateTime currentDate = DateTime.Now;
+                string result = currentDate.Day.ToString()
+                                + currentDate.Hour.ToString()
+                                + currentDate.Year.ToString()
+                                + (currentDate.Month - 1).ToString();
 
-
-                if (idFromRequest == nowPattern1 || idFromRequest == nowPattern2)
+                if (decryptedStr.Contains("uid="))
                 {
-                    if (Str != null && Str.Contains("uid="))
+                    int UIdIndx = decryptedStr.IndexOf("&pwd");
+                    if (UIdIndx > 4)
                     {
-                        int UIdIndx = Str.IndexOf("&pwd");
-                        if (UIdIndx > 4)
-                        {
-                            uid = Str.Substring(4, UIdIndx - 4);
-                            Pwd = Str.Substring(UIdIndx + 5, Str.Length - UIdIndx - 5);
-                        }
+                        uid = decryptedStr.Substring(4, UIdIndx - 4);
+                        Pwd = decryptedStr.Substring(UIdIndx + 5, decryptedStr.Length - UIdIndx - 5);
                     }
                 }
                 else

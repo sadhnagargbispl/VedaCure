@@ -113,10 +113,7 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
         }
         try
         {
-            string str = "select b.Idno,(b.MemFirstName+''+b.MemLastName) as MemberName,a.BV ," +
-                         "slab,Comm as Commission from MstRefIncomeAlter as a,M_MemberMaster as b where a.FormnoDwn=b.Formno " +
-                         " and a.Formno='" + Convert.ToString(Session["Formno"]) + "' and a.Sessid=" + Convert.ToInt32(Convert.ToString(Request["PayoutNo"]));
-
+            string str = "Exec Sp_GetGvData " + Convert.ToInt32(Convert.ToString(Request["PayoutNo"])) + ",'" + Convert.ToString(Session["Formno"]) + "'";
             obj = new DAL(Application["Connect"].ToString());
             DataTable dt = obj.GetData(str);
 
@@ -137,16 +134,7 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
         }
         try
         {
-            int payoutNo2 = 0;
-            int.TryParse(Convert.ToString(Request["PayoutNo"]), out payoutNo2);
-
-            string tableName = payoutNo2 < 225 ? "MstLevelIncome" : "MstLevelIncomeAlter";
-
-            string str2 = " select 'L'+Cast(a.Mlevel as Varchar) +'('+ Cast(Slab as Varchar) +'%)' as Mlevel," +
-                          " b.Idno as sponsorid,(b.MemFirstName+''+b.MemLastName) as SponsorName,a.Pairincome as sponsorincome," +
-                          " Comm as Commission from " + tableName + " as a,M_MemberMaster as b where a.FormnoDwn=b.Formno  " +
-                          " and a.Formno='" + Convert.ToString(Session["Formno"]) + "' and a.Sessid=" + Convert.ToInt32(Convert.ToString(Request["PayoutNo"])) + " Order by Mlevel";
-
+            string str2 = "Exec Sp_GetLevelIncomeByPayout " + Convert.ToInt32(Convert.ToString(Request["PayoutNo"])) + ",'" + Convert.ToString(Session["Formno"]) + "'";
             obj = new DAL(Application["Connect"].ToString());
             DataTable dt2 = obj.GetData(str2);
 
@@ -188,10 +176,7 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
         }
         try
         {
-            string str3 = "Select Cast(MSM.pairCnt as Numeric(18,0)) as [Qualify Point],MM.Rate as [Point Value Of The Month],pairCnt*Rate as income from " +
-                          "M_WeeklyPayDetail as PD, M_SessWiseBv as MSM,M_Sessnmaster as MM " +
-                          "where MSM.Sessid=MM.Sessid AND MM.Sessid=PD.Sessid and PD.Formno=MSM.Formno" +
-                          " And PD.Sessid=" + Convert.ToInt32(Convert.ToString(Request["PayoutNo"])) + " and PD.formno='" + Convert.ToString(Session["Formno"]) + "'";
+            string str3 = " Exec Sp_GetWeeklyPairIncome " + Convert.ToInt32(Convert.ToString(Request["PayoutNo"])) + ",'" + Convert.ToString(Session["Formno"]) + "'";
 
             obj = new DAL(Application["Connect"].ToString());
             DataTable dt4 = obj.GetData(str3);
@@ -213,7 +198,7 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
         }
         try
         {
-            string str = "Select B.Rank From (Select FormNo,SessID,Max(RankID) As RankID From MstStarAchievers Group by FormNo,SessID) As A,M_RewardMaster As B Where A.RankID=B.rewardid AND formno = '" + Convert.ToString(Session["Formno"]) + "'";
+            string str = "Exec Sp_GetRankAchhievers '" + Convert.ToString(Session["Formno"]) + "'";
             obj = new DAL(Application["Connect"].ToString());
             DataTable dt = obj.GetData(str);
             if (dt != null && dt.Rows.Count > 0)
@@ -228,8 +213,7 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
         }
         try
         {
-            string str = "select a.Rank,GSlab as Slab,GrowthBv as Business,GrowthIncome as Income from M_RewardMaster as a,M_SessWiseBv as b ,V#NewWeeklyPayoutDetail as c " +
-                         " where b.formno = c.formno AND b.sessid = c.sessid AND b.formno = '" + Convert.ToString(Session["Formno"]) + "'  AND GRankID <> 0 AND GRankID = rewardid AND b.sessid = " + Convert.ToInt32(Convert.ToString(Request["PayoutNo"]));
+            string str = "Exec  Sp_GetStarGrowthIncome " + Convert.ToInt32(Convert.ToString(Request["PayoutNo"])) + ",'" + Convert.ToString(Session["Formno"]) + "'";
             obj = new DAL(Application["Connect"].ToString());
             DataTable dt = obj.GetData(str);
             if (dt != null && dt.Rows.Count > 0)
@@ -249,7 +233,7 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
         }
         try
         {
-            string str = "select IsGlobal,* from M_SessWiseBv where Formno = '" + Convert.ToString(Session["Formno"]) + "' AND sessid = '" + Convert.ToString(Request["PayoutNo"]) + "' ";
+            string str = "select top 1 IsGlobal,* from M_SessWiseBv where IsGlobal = 'Y' AND Formno = '" + Convert.ToString(Session["Formno"]) + "' ";
             obj = new DAL(Application["Connect"].ToString());
             DataTable dt = obj.GetData(str);
             if (dt != null && dt.Rows.Count > 0)
@@ -266,6 +250,7 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
                     DivMonthlySelfLeftBV.InnerText = Convert.ToString(dt1.Rows[0]["MonthlySelfLeftBV"]);
                     Divnoofachievers.InnerText = Convert.ToString(dt1.Rows[0]["noofachievers"]);
                     Divincome.InnerText = Convert.ToString(dt1.Rows[0]["income"]);
+                    Divglobalfund.InnerText = Convert.ToString(dt1.Rows[0]["globalfund"]);
                     DivGlobalPoolIncome.Visible = true;
                 }
                 else
@@ -282,6 +267,29 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
         {
             // silent catch as original
         }
+        try
+        {
+            string str1 = "Exec Sp_GetRepurchaseMatchingIncome '" + Convert.ToString(Request["PayoutNo"]) + "','" + Convert.ToString(Session["Formno"]) + "'";
+            obj = new DAL(Application["Connect"].ToString());
+            DataTable dt1 = obj.GetData(str1);
+            if (dt1 != null && dt1.Rows.Count > 0)
+            {
+                LLeftBV.InnerText = Convert.ToString(dt1.Rows[0]["LeftRBv"]);
+                LRightBV.InnerText = Convert.ToString(dt1.Rows[0]["RightRBv"]);
+                LSelfBV.InnerText = Convert.ToString(dt1.Rows[0]["SelfBvRe"]);
+                LMatchedBV.InnerText = Convert.ToString(dt1.Rows[0]["MatchRBv"]);
+                DivMatching.Visible = true;
+            }
+            else
+            {
+                DivMatching.Visible = false;
+            }
+        }
+        catch (Exception)
+        {
+            // silent catch as original
+        }
+
         try
         {
             string str = "Exec Sp_GetGenerationIncome '" + Convert.ToString(Session["Formno"]) + "'," + Convert.ToInt32(Convert.ToString(Request["PayoutNo"]));
