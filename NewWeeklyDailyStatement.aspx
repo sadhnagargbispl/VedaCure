@@ -443,13 +443,16 @@
             <div runat="server" id="DivMatching" visible="false">
                 <table class="table table-bordered " cellspacing="0" cellpadding="3" align="Center" rules="all" border="1" style="width: 100%; border-collapse: collapse;">
                     <tr>
-                        <td colspan="4" class="header-main">Repurchase Matching Income</td>
+                        <td colspan="6" class="header-main">Repurchase Matching Income</td>
                     </tr>
                     <tr class="GridHeader">
                         <td  class="earn-head">Left BV</td>
                         <td  class="earn-head">Right BV</td>
                         <td  class="earn-head">Self BV</td>
-                        <td  class="earn-head">Matched BV</td>
+                        <td  class="earn-head">Matched BV</td> 
+                        <td  class="earn-head">Point Vlaue</td>
+                        <td  class="earn-head">Income</td>
+                           
                     </tr>
                     <tr class="GridItem">
                         <td>
@@ -464,6 +467,13 @@
                         <td>
                             <div id="LMatchedBV" runat="server"></div>
                         </td>
+                               <td>                  
+    <div id="lratet" runat="server"></div>
+</td>
+                        <td>
+    <div id="lIncome" runat="server"></div>
+</td>
+      
                     </tr>
                 </table>
             </div>

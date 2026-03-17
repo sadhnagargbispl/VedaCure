@@ -278,6 +278,8 @@ public partial class NewWeeklyDailyStatement : System.Web.UI.Page
                 LRightBV.InnerText = Convert.ToString(dt1.Rows[0]["RightRBv"]);
                 LSelfBV.InnerText = Convert.ToString(dt1.Rows[0]["SelfBvRe"]);
                 LMatchedBV.InnerText = Convert.ToString(dt1.Rows[0]["MatchRBv"]);
+                lIncome.InnerText = Convert.ToString(dt1.Rows[0]["RePairIncome"]);
+                lratet.InnerText = Convert.ToString(dt1.Rows[0]["rate"]);
                 DivMatching.Visible = true;
             }
             else
