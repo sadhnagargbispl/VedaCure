@@ -316,6 +316,7 @@
                                                         <li><a class="nav-link" href="MyDirects.aspx">Directs Downline</a></li>
                                                         <li><a class="nav-link" href="Downline.aspx">Downline</a></li>
                                                         <li><a class="nav-link" href="DownlinePurchase.aspx">Downline Purchase</a></li>
+                                                        <li><a class="nav-link" href="DownlineRankReport.aspx">Growline Rank Report</a></li>
                                                     </ul>
                                                 </li>
                                                 <li class="dropdown">
