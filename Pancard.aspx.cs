@@ -148,6 +148,7 @@ public partial class Pancard : System.Web.UI.Page
                 LbLrejectRemark.Text = "";
                 VerifyDate.Text = "";
                 DivVerify.Attributes.Add("style", "color:black");
+                txtpan.Enabled = true;
             }
             else if (status == "Rejected")
             {
@@ -158,6 +159,7 @@ public partial class Pancard : System.Web.UI.Page
                 VerifyDate.Text = "Reject Date:";
                 DivVerify.Attributes.Add("style", "color:red");
                 txtpan.Enabled = true; // Enable if empty
+
             }
             else
             {
@@ -280,8 +282,8 @@ public partial class Pancard : System.Web.UI.Page
             string Qry = "Insert Into TempMemberMaster Select *, 'Update PanCard - " + Context.Request.UserHostAddress.ToString() +
              "', GetDate(), 'U' From M_MemberMaster Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
 
-            Qry += "Insert Into TempKycVerify Select *, GetDate(), '" + Session["FormNo"] +
-                   "' From KycVerify Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
+            //Qry += "Insert Into TempKycVerify Select *, GetDate(), '" + Session["FormNo"] +
+            //       "' From KycVerify Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
 
             Qry += "Insert Into UserHistory(UserId, UserName, PageName, Activity, ModifiedFlds, RecTimeStamp, MemberId) Values " +
                    "(0, '" + Session["MemName"] + "', 'Pancard', 'PanCard Update', '" + Remark +

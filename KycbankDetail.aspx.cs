@@ -271,6 +271,11 @@ public partial class KycbankDetail : System.Web.UI.Page
                 LbLrejectRemark.Text = "";
                 VerifyDate.Text = "";
                 DivVerify.Attributes.Add("style", "color:black");
+
+                cmbbank.Enabled = true; // Enable if empty
+                Txtbranch.Enabled = true; // Enable if empty
+                Txtcode.Enabled = true; // Enable if empty
+                DDLAccountType.Enabled = true;
             }
             else if (status == "Rejected")
             {
@@ -490,8 +495,8 @@ public partial class KycbankDetail : System.Web.UI.Page
             string Qry = "Insert Into TempMemberMaster Select *, 'Update BankProof - " + Context.Request.UserHostAddress.ToString() +
              "', GetDate(), 'U' From M_MemberMaster Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
 
-            Qry += "Insert Into TempKycVerify Select *, GetDate(), '" + Session["FormNo"] +
-                   "' From KycVerify Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
+            //Qry += "Insert Into TempKycVerify Select *, GetDate(), '" + Session["FormNo"] +
+            //       "' From KycVerify Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
 
             Qry += "Insert Into UserHistory(UserId, UserName, PageName, Activity, ModifiedFlds, RecTimeStamp, MemberId) Values " +
                    "(0, '" + Session["MemName"] + "', 'BankProof', 'Bank Detail Update', '" + Remark +
