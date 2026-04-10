@@ -104,7 +104,7 @@ public partial class iddetail : System.Web.UI.Page
             Response.Write("Try later.");
         }
     }
-    private void LoadImages()
+    private void LoadImages() 
     {
         try
         {
@@ -112,8 +112,9 @@ public partial class iddetail : System.Web.UI.Page
             string status = "";
             string str = "";
             DataTable dt = new DataTable();
+
             str = "SELECT a.IDNo, a.MemFirstName AS MemName, a.Address1, a.City, a.Tehsil, a.District,0 as  AreaCode, " +
-            "CityCode, DistrictCode, a.StateCode, a.Pincode, b.IdProofNo, b.AddrProof, " +
+            "CityCode, DistrictCode, a.StateCode, a.Pincode, b.IdProofNo, b.AddrProof,s.StateName, " +
             "CASE WHEN b.IsAddrssverified <> 'N' THEN " +
             "REPLACE(CONVERT(VARCHAR, b.AddrssVerifyDate, 106), ' ', '-') ELSE '' END AS AddrProofDate, " +
             "b.IsAddrssverified, " +
@@ -126,8 +127,11 @@ public partial class iddetail : System.Web.UI.Page
             "FROM M_MemberMaster AS a " +
             "INNER JOIN KycVerify AS b ON a.FormNo = b.FormNo " +
             "LEFT JOIN M_KycReject AS f ON f.Kid = b.AddressRejectId " +
-            "INNER JOIN M_IdTypeMaster AS c ON b.IdType = c.Id AND c.ActiveStatus = 'Y' " +
-            "WHERE b.FormNo = '" + Session["FormNo"] + "'";
+            "INNER JOIN M_IdTypeMaster AS c ON b.IdType = c.Id " +
+            "INNER join M_StateDivMaster as s on  a.StateCode=s.Statecode " +
+            "AND c.ActiveStatus = 'Y' " +
+            "WHERE b.FormNo = '" + Session["FormNo"] + "' AND s.RowStatus = 'Y'";
+
 
             //str = ObjDal.Isostart + "Exec sp_FillKyc " + Convert.ToInt32(Session["Formno"]) + "" + ObjDal.IsoEnd;
             dt = SqlHelper.ExecuteDataset(Application["Connect"].ToString(), CommandType.Text, str).Tables[0];
@@ -142,7 +146,7 @@ public partial class iddetail : System.Web.UI.Page
                 StateCode.Value = dt.Rows[0]["Statecode"].ToString();
                 HDistrictCode.Value = dt.Rows[0]["Districtcode"].ToString();
                 HCityCode.Value = dt.Rows[0]["Citycode"].ToString();
-                //ddlState.SelectedItem.Text = dt.Rows[0]["StateName"].ToString();
+                ddlState.SelectedItem.Text = dt.Rows[0]["StateName"].ToString();
                 lblverstatus.Text = dt.Rows[0]["idVerf"].ToString();
                 DDLAddressProof.SelectedValue = dt.Rows[0]["Id"].ToString();
                 DDlVillage.SelectedValue = dt.Rows[0]["areacode"].ToString();
@@ -152,7 +156,9 @@ public partial class iddetail : System.Web.UI.Page
                 status = dt.Rows[0]["Idverf"].ToString();
                 TxtIdProofNo.Text = dt.Rows[0]["IdProofNo"].ToString();
 
-                
+
+
+
                 if (string.IsNullOrEmpty(TxtIdProofNo.Text))
                 {
                     TxtIdProofNo.Enabled = true; // Enable if empty
@@ -296,6 +302,14 @@ public partial class iddetail : System.Web.UI.Page
                 LbLrejectRemark.Text = "";
                 VerifyDate.Text = "";
                 DivVerify.Attributes.Add("style", "color:black");
+                TxtIdProofNo.Enabled = true; // Enable if empty
+                txtaddrs.Enabled = true; // Enable if empty
+
+                Txtpincode.Enabled = true; // Enable if empty
+                ddlState.Enabled = true; // Enable if empty
+                Txtdistrict.Enabled = true; // Enable if empty
+                Txtcity.Enabled = true; // Enable if empty
+                DDLAddressProof.Enabled = true; // Enable if empty
             }
             else if (status == "Rejected")
             {
@@ -327,7 +341,6 @@ public partial class iddetail : System.Web.UI.Page
                 DivVerify.Attributes.Add("style", "color:Green");
             }
 
-            LblVerification.Visible = true;
 
         }
 
@@ -631,8 +644,8 @@ public partial class iddetail : System.Web.UI.Page
             string Qry = "Insert Into TempMemberMaster Select *,'Update Address Proof - " + Context.Request.UserHostAddress.ToString() +
              "',GetDate(),'U' From M_MemberMaster Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
 
-            Qry += "Insert Into TempKycVerify Select *,GetDate(),'" + Session["FormNo"] +
-                   "' From KycVerify Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
+            //Qry += "Insert Into TempKycVerify Select *,GetDate(),'" + Session["FormNo"] +
+            //       "' From KycVerify Where FormNo='" + Convert.ToInt32(Session["FormNo"]) + "';";
 
             Qry += "Insert Into UserHistory(UserId,UserName,PageName,Activity,ModifiedFlds,RecTimeStamp,MemberId) Values " +
                    "(0,'" + Session["MemName"] + "','AddressProof Detail','AddressProof Detail Update','" + Remark +
